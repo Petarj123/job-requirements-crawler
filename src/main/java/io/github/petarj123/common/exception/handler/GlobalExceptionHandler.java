@@ -21,6 +21,7 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
             NotFoundException.class, 404,
             IllegalAccessException.class, 400,
             NoSuchFieldException.class, 400,
+            SecurityException.class, 401,
             Exception.class, 500
     );
 
