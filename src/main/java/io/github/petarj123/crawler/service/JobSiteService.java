@@ -32,10 +32,6 @@ public class JobSiteService {
         return jobSiteRepository.getAll();
     }
 
-    public JobSite getById(int id) {
-        return jobSiteRepository.getById(id).orElseThrow(() -> new NotFoundException("Job site not found with id: " + id));
-    }
-
     @Transactional
     public JobSite createJobSite(JobSiteDTO jobSiteDTO) {
         JobSite jobSite = new JobSite(jobSiteDTO.name(), jobSiteDTO.baseUrl(), jobSiteDTO.lastCrawled(), jobSiteDTO.isActive(), LocalDateTime.now(), LocalDateTime.now());
@@ -50,13 +46,23 @@ public class JobSiteService {
     }
 
     @Transactional
-    public JobSite updateJobSite(int id, JobSiteDTO jobSiteDTO) throws NoSuchFieldException, IllegalAccessException {
+    public JobSite updateJobSite(Long id, JobSiteDTO jobSiteDTO) throws NoSuchFieldException, IllegalAccessException {
         JobSite jobsite = getById(id);
         entityMapper.updateEntity(jobsite, jobSiteDTO);
         jobsite.setUpdatedAt(LocalDateTime.now());
 
+        Set<ConstraintViolation<JobSite>> violations = validator.validate(jobsite);
+
+        if (!violations.isEmpty()) {
+            throw new ValidationException(violations);
+        }
+
         jobSiteRepository.persist(jobsite);
         return jobsite;
+    }
+
+    public JobSite getById(Long id) {
+        return jobSiteRepository.getById(id).orElseThrow(() -> new NotFoundException("Job site not found with id: " + id));
     }
 
 

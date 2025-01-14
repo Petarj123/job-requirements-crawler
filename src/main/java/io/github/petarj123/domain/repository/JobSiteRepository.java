@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class JobSiteRepository implements PanacheRepository<JobSite> {
-    public Optional<JobSite> getById(int id) {
+    public Optional<JobSite> getById(Long id) {
         return find("id", id).firstResultOptional();
     }
 
